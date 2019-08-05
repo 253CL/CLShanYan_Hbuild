@@ -2,8 +2,8 @@
 
 闪验SDK Hbuild插件&Demo
 
-## 插件市场】
-[闪验SDK](http://ext.dcloud.net.cn/plugin?id=645)
+## 插件市场
+[闪验SDK Hbuild插件市场](http://ext.dcloud.net.cn/plugin?id=645)
 
 ## Documents
 [闪验SDK-HBuilder插件集成文档](https://github.com/253CL/CLShanYan_Hbuild/wiki/闪验SDK-HBuilder插件集成文档)
