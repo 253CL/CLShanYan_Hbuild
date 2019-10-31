@@ -1,0 +1,6 @@
+framework module CLShanYanSDKHbuilderPlugin {
+  umbrella header "CLShanYanSDKHbuilderPlugin.h"
+
+  export *
+  module * { export * }
+}

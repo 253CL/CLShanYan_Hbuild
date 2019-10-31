@@ -4,14 +4,14 @@
     "iPhone",
     "iPad"
   ],
-  "id": "__UNI__5656820",
+  "id": "__UNI__5976DFC",
   "name": "ShanYanPlugOnLine",
   "version": {
     "name": "1.0.0",
     "code": "100"
   },
   "description": "登录模板",
-  "launch_path": "__uniapptabbar.html",
+  "launch_path": "__uniappview.html",
   "developer": {
     "name": "",
     "email": "",
@@ -24,7 +24,7 @@
   },
   "plus": {
     "useragent": {
-      "value": "uni-app appservice",
+      "value": "uni-app",
       "concatenate": true
     },
     "splashscreen": {
@@ -35,7 +35,9 @@
     },
     "popGesture": "close",
     "launchwebview": {
-      "render": "always"
+      "id": "1",
+      "kernel": "WKWebview",
+      "uni-app": "auto"
     },
     "statusbar": {
       "immersed": "supportedDevice",
@@ -82,15 +84,15 @@
     "nativePlugins": {
       "CLSDK-ShanYanSDKModule": {
         "__plugin_info__": {
-          "name": "闪验SDK_2.2.1",
-          "description": "本机号码一键登录",
+          "name": "CLSDK-ShanYanSDKModule",
+          "description": "闪验SDKHbuilder插件",
           "platforms": "Android,iOS",
-          "url": "https://ext.dcloud.net.cn/plugin?id=645",
+          "url": "",
           "android_package_name": "",
-          "ios_bundle_id": "com.253.QuanJu",
-          "isCloud": true,
-          "bought": 1,
-          "pid": "645",
+          "ios_bundle_id": "",
+          "isCloud": false,
+          "bought": -1,
+          "pid": "",
           "parameters": {}
         }
       }
@@ -103,17 +105,35 @@
       }
     },
     "uni-app": {
-      "compilerVersion": "2.1.3",
+      "compilerVersion": "2.3.7",
       "control": "v8",
-      "nvueCompiler": "weex"
+      "nvueCompiler": "weex",
+      "renderer": "auto"
     },
-    "secondwebview": {
-      "id": "1",
-      "launch_path": "__uniappview.html",
-      "kernel": "WKWebview",
-      "mode": "child",
-      "top": 0,
-      "bottom": 56
+    "tabBar": {
+      "color": "#7a7e83",
+      "selectedColor": "#0faeff",
+      "backgroundColor": "#ffffff",
+      "list": [
+        {
+          "pagePath": "pages/main/main",
+          "text": "首页",
+          "iconPath": "static/img/home.png",
+          "selectedIconPath": "static/img/homeHL.png"
+        },
+        {
+          "pagePath": "pages/user/user",
+          "text": "我的",
+          "iconPath": "static/img/user.png",
+          "selectedIconPath": "static/img/userHL.png"
+        }
+      ],
+      "borderStyle": "rgba(0,0,0,0.4)",
+      "height": "50px",
+      "child": [
+        "lauchwebview"
+      ],
+      "selected": 0
     }
   }
 }

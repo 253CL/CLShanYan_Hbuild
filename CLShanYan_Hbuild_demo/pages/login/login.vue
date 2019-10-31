@@ -1,30 +1,39 @@
 <template>
 	<view class="content">
-		<view class="input-group">
-			<view class="input-row border">
-				<text class="title">账号：</text>
-				<m-input class="m-input" type="text" clearable focus v-model="account" placeholder="请输入账号"></m-input>
-			</view>
-			<view class="input-row">
-				<text class="title">密码：</text>
-				<m-input type="password" displayable v-model="password" placeholder="请输入密码"></m-input>
-			</view>
+		<view class="result_group">
+			<text class="text_attr">code： {{shanyan_code}}</text>
+			<text class="text_attr">result: {{shanyan_result}}</text>
 		</view>
-		<view class="btn-row">
-			<button type="primary" class="primary" @tap="bindLogin">登录</button>
-		</view>
-		<view class="btn-row">
-			<button type="primary" @tap="qulickLogin">本机号码一键登录</button>
+		<view class="tableTitle">
+			<text class="midText">一键登录功能</text>
 		</view>
 		<view class="action-row">
-			<navigator url="../reg/reg">注册账号</navigator>
-			<text>|</text>
-			<navigator url="../pwd/pwd">忘记密码</navigator>
-		</view>
-		<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
-			<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
-				<image :src="provider.image" @tap="oauth(provider.value)"></image>
+			<view class="button_attr">
+				<button type="primary" @tap="init">闪验SDK 初始化</button>
 			</view>
+			<view class="button_attr">
+				<button type="primary" @tap="getPhoneInfo">闪验SDK 预取号</button>
+			</view>
+		</view>
+		<view class="action-row">
+			<view class="button_attr">
+				<button type="primary" @tap="setAuthCJSThemeConfig">授权页 沉浸样式</button>
+			</view>
+			<view class="button_attr">
+				<button type="primary" @tap="setAuthDialogThemeConfig">授权页 弹窗样式</button>
+			</view>
+		</view>
+		<view class="button_attr">
+			<button type="primary" @tap="qulickLogin">闪验SDK 拉起授权页</button>
+		</view>
+		<view class="tableTitle">
+			<text class="midText">本机号认证功能</text>
+		</view>
+		<view class="button_attr">
+			<button type="primary" @tap="init">本机认证 初始化</button>
+		</view>
+		<view class="button_attr">
+			<button type="primary" @tap="startAuthentication">本机认证 获取token</button>
 		</view>
 	</view>
 </template>
@@ -41,63 +50,237 @@
 
 	export default {
 		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
-			let platform = uni.getSystemInfoSync().platform;
-			if (platform == 'android') {
-				//预取号
-				shanYanSDKModule.getPhoneInfo((complete) => {
-					console.log(JSON.stringify(complete));
-				});
-			} else if (platform == 'ios') {
-				//预取号
-				shanYanSDKModule.preGetPhonenumber((complete) => {
-					console.log(JSON.stringify(complete));
-				});
-			}
-
 		},
 		components: {
 			mInput
 		},
 		data() {
 			return {
-				providerList: [],
-				hasProvider: false,
 				account: '',
-				password: '',
-				positionTop: 0
+				shanyan_code: '状态码',
+				shanyan_result: '信息描述',
 			}
 		},
 		computed: mapState(['forcedLogin']),
 		methods: {
-			...mapMutations(['login']),
-			initProvider() {
-				const filters = ['weixin', 'qq', 'sinaweibo'];
-				uni.getProvider({
-					service: 'oauth',
-					success: (res) => {
-						if (res.provider && res.provider.length) {
-							for (let i = 0; i < res.provider.length; i++) {
-								if (~filters.indexOf(res.provider[i])) {
-									this.providerList.push({
-										value: res.provider[i],
-										image: '../../static/img/' + res.provider[i] + '.png'
-									});
-								}
-							}
-							this.hasProvider = true;
+			init() {
+				uni.showLoading({
+					mask: true,
+				})
+				let platform = uni.getSystemInfoSync().platform;
+				let appid;
+				if (platform == 'android') {
+					appid = 'loXN4jDs';
+				} else if (platform == 'ios') {
+					appid = 'eWWfA2KJ';
+				}
+				//闪验SDK 初始化
+				shanYanSDKModule.init({
+					appid: appid,
+				}, result => {
+					uni.hideLoading();
+					this.shanyan_code = JSON.stringify(result.code);
+					this.shanyan_result = JSON.stringify(result.result);
+					console.log(JSON.stringify(result));
+				});
+
+			},
+			getPhoneInfo() {
+				uni.showLoading({
+					mask: true,
+				})
+				let platform = uni.getSystemInfoSync().platform;
+				if (platform == 'android') {
+					//闪验SDK 预取号
+					shanYanSDKModule.getPhoneInfo((result) => {
+						uni.hideLoading();
+						this.shanyan_code = JSON.stringify(result.code);
+						this.shanyan_result = JSON.stringify(result.result);
+						console.log(JSON.stringify(result));
+					});
+				} else if (platform == 'ios') {
+					//预取号
+					shanYanSDKModule.preGetPhonenumber((complete) => {
+						console.log(JSON.stringify(complete));
+					});
+				}
+			},
+			setAuthCJSThemeConfig() {
+				//闪验SDK  配置授权页方法
+				shanYanSDKModule.setAuthThemeConfig({
+					//授权页已有元素配置
+					uiConfig: {
+						setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
+						setNavColor: '#ff0000',
+						setLogoImgPath: 'static/logo_shanyan_text.png',
+						setAppPrivacyOne: {
+							title: '闪验用户协议',
+							url: "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html"
+						},
+						setAppPrivacyTwo: {
+							title: '闪验隐私政策',
+							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+						},
+						setAppPrivacyThree: {
+							title: '服务协议',
+							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+						},
+						setPrivacyState: false,
+						setPrivacyText: {
+							privacyTextOne: '登录即同意',
+							privacyTextTwo: "、",
+							privacyTextThree: '、',
+							privacyTextFour: '和',
+							privacyTextFive: '并授权登录'
+						},
+
+					}, //授权页添加自定义控件元素
+					widgets: {
+						widget1: {
+							widgetId: "customView_one",
+							type: "TextView",
+							left: "",
+							top: "300",
+							right: "",
+							bottom: "",
+							width: "",
+							height: "30",
+							textContent: "自定义控件1（点击不销毁授权页）",
+							textFont: "13",
+							textColor: "#cc0000",
+							backgroundColor: "#ffffff",
+							isFinish: "false"
+						},
+						widget2: {
+							widgetId: "customView_two",
+							type: "TextView",
+							left: "",
+							top: "360",
+							right: "",
+							bottom: "",
+							width: "",
+							height: "30",
+							textContent: "自定义控件2（点击销毁授权页）",
+							textFont: "13",
+							textColor: "#cc0000",
+							backgroundColor: "#ffffff",
+							isFinish: "true"
+						},
+						widget3: {
+							widgetId: "customView_three",
+							type: "ImageView",
+							left: "",
+							top: "400",
+							right: "",
+							bottom: "",
+							width: "",
+							height: "",
+							backgroundImgPath: "static/qq.png",
+							isFinish: "true"
 						}
 					},
-					fail: (err) => {
-						console.error('获取服务供应商失败：' + JSON.stringify(err));
-					}
+				}, result => {
+					console.log(JSON.stringify(result));
 				});
+
+				this.shanyan_code = 1000;
+				this.shanyan_result = "授权页配置完成";
 			},
-			initPosition() {
-				/**
-				 * 使用 absolute 定位，并且设置 bottom 值进行定位。软键盘弹出时，底部会因为窗口变化而被顶上来。
-				 * 反向使用 top 进行定位，可以避免此问题。
-				 */
-				this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
+			setAuthDialogThemeConfig() {
+				shanYanSDKModule.setAuthThemeConfig({
+					//授权页已有元素配置
+					uiConfig: {
+						setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
+						setNavColor: '#ff0000',
+						setNavText: "",
+						setNavTextSize: "0",
+						setNavReturnImgPath: "static/close_black.png",
+						setNavReturnBtnOffsetRightX: "15",
+						setLogoImgPath: 'static/logo_shanyan_text.png',
+						setLogoOffsetY: "15",
+						setLogoWidth: "110",
+						setLogoHeight: "60",
+						setNumFieldOffsetY: "80",
+						setNumberSize: "18",
+						setLogBtnText: "本机号码免密登录",
+						setLogBtnOffsetY: "140",
+						setPrivacyState:"true",
+						setAppPrivacyOne: {
+							title: '闪验用户协议',
+							url: "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html"
+						},
+						setAppPrivacyTwo: {
+							title: '闪验隐私政策',
+							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+						},
+						setAppPrivacyThree: {
+							title: '服务协议',
+							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+						},
+						setPrivacyText: {
+							privacyTextOne: '登录即同意',
+							privacyTextTwo: "、",
+							privacyTextThree: '、',
+							privacyTextFour: '和',
+							privacyTextFive: '并授权登录'
+						},
+						setSloganHidden: "true",
+						setDialogTheme: {
+							width: "300",
+							height: "400",
+							marginLeft: "0",
+							marginTop: "0",
+							isBottom: "false"
+						}
+
+					}, //授权页添加自定义控件元素
+					widgets: {
+						widget1: {
+							widgetId: "customView_one",
+							type: "TextView",
+							left: "",
+							top: "195",
+							right: "",
+							bottom: "",
+							width: "",
+							height: "30",
+							textContent: "自定义控件（不销毁授权页）",
+							textFont: "13",
+							textColor: "#cc0000",
+							backgroundColor: "#ffffff",
+							isFinish: "false"
+						},
+						widget2: {
+							widgetId: "customView_two",
+							type: "ImageView",
+							left: "",
+							top: "230",
+							right: "",
+							bottom: "",
+							width: "30",
+							height: "30",
+							backgroundImgPath: "static/qq.png",
+							isFinish: "true"
+						}
+					},
+				}, result => {
+					console.log(JSON.stringify(result));
+
+				});
+
+				this.shanyan_code = 1000;
+				this.shanyan_result = "授权页配置完成";
+			},
+			startAuthentication() {
+				uni.showLoading({
+					mask: true,
+				});
+				shanYanSDKModule.startAuthentication((result) => {
+					uni.hideLoading();
+					this.shanyan_code = JSON.stringify(result.code);
+					this.shanyan_result = JSON.stringify(result.result);
+					console.log(JSON.stringify(result));
+				});
 			},
 			qulickLogin() {
 				uni.showLoading({
@@ -106,49 +289,28 @@
 				setTimeout(function() {
 					uni.hideLoading();
 				}, 5000);
-
 				let platform = uni.getSystemInfoSync().platform;
 				if (platform == 'android') {
-
-					shanYanSDKModule.setAuthThemeConfig({
-						setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
-						setNavColor: '#ff0000',
-						setLogoImgPath: 'static/logo_shanyan_text.png',
-						setAppPrivacyOne: {
-							title: '用户协议1',
-							url: "http://flash.253.com/"
-						},
-						setPrivacyState: false,
-						setPrivacyText: {
-							privacyTextOne: '同意',
-							privacyTextTwo: "、",
-							privacyTextThree: '和',
-							privacyTextFour: '并授权登录'
-						}
-					});
-
+					/*************************Android*************************/
+					//闪验SDK  拉起授权页方法
 					shanYanSDKModule.openLoginAuth(true,
 						result => {
+							uni.hideLoading();
+							this.shanyan_code = JSON.stringify(result.code);
+							this.shanyan_result = JSON.stringify(result.result);
 							console.log(JSON.stringify(result));
 						},
 						result => {
+							this.shanyan_code = JSON.stringify(result.code);
+							this.shanyan_result = JSON.stringify(result.result);
 							console.log(JSON.stringify(result));
-
-							//debug_test
-							uni.showToast({
-								icon: "none",
-								title: JSON.stringify(oneKeyLoginListenerResult),
-								duration: 3000
-							});
-
 						});
 
-					return;
 				} else if (platform == 'ios') {
 					//iOS一键登录
-					
+
 					//弹窗方式
-					
+
 					//配置界面
 
 					let screenWidth_Portrait = plus.screen.resolutionWidth; //竖屏宽
@@ -418,66 +580,6 @@
 						});
 				}
 			},
-			bindLogin() {
-				/**
-				 * 客户端对账号信息进行一些必要的校验。
-				 * 实际开发中，根据业务需要进行处理，这里仅做示例。
-				 */
-				if (this.account.length < 5) {
-					uni.showToast({
-						icon: 'none',
-						title: '账号最短为 5 个字符'
-					});
-					return;
-				}
-				if (this.password.length < 6) {
-					uni.showToast({
-						icon: 'none',
-						title: '密码最短为 6 个字符'
-					});
-					return;
-				}
-				/**
-				 * 下面简单模拟下服务端的处理
-				 * 检测用户账号密码是否在已注册的用户列表中
-				 * 实际开发中，使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
-				 */
-				const data = {
-					account: this.account,
-					password: this.password
-				};
-				const validUser = service.getUsers().some(function(user) {
-					return data.account === user.account && data.password === user.password;
-				});
-				if (validUser) {
-					this.toMain(this.account);
-				} else {
-					uni.showToast({
-						icon: 'none',
-						title: '用户账号或密码不正确',
-					});
-				}
-			},
-			oauth(value) {
-				uni.login({
-					provider: value,
-					success: (res) => {
-						uni.getUserInfo({
-							provider: value,
-							success: (infoRes) => {
-								/**
-								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
-								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
-								 */
-								this.toMain(infoRes.userInfo.nickName);
-							}
-						});
-					},
-					fail: (err) => {
-						console.error('授权登录失败：' + JSON.stringify(err));
-					}
-				});
-			},
 			toMain(userName) {
 				this.login(userName);
 				/**
@@ -502,39 +604,60 @@
 </script>
 
 <style>
+	.result_group {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		background-color: #B9F6CA;
+		margin: 0 10upx;
+		border-radius: 10upx;
+
+	}
+
 	.action-row {
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-	}
-
-	.action-row navigator {
-		color: #007aff;
-		padding: 0 20upx;
-	}
-
-	.oauth-row {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		position: absolute;
-		top: 0;
-		left: 0;
+		margin: 0 10upx;
+		border-radius: 10upx;
 		width: 100%;
 	}
 
-	.oauth-image {
-		width: 100upx;
-		height: 100upx;
-		border: 1upx solid #dddddd;
-		border-radius: 100upx;
-		margin: 0 40upx;
-		background-color: #ffffff;
+	.text_attr {
+		width: 95%;
+		margin-left: 30upx;
+		margin-top: 10upx;
+		margin-bottom: 10upx;
+		margin-right: 30upx;
+		word-wrap: break-word;
+		word-break: break-all;
+		font-size: 30upx;
 	}
 
-	.oauth-image image {
-		width: 60upx;
-		height: 60upx;
-		margin: 20upx;
+	.button_attr {
+		justify-content: center;
+		margin-top: 30upx;
+		margin-left: 15upx;
+		margin-right: 15upx;
+		margin-bottom: 30upx;
+	}
+
+	.tableTitle {
+		position: relative;
+		margin-top: 50upx;
+		margin-bottom: 50upx;
+		width: 100%;
+		height: 1px;
+		background-color: #d4d4d4;
+		text-align: center;
+		font-size: 16px;
+		color: rgba(101, 101, 101, 1);
+	}
+
+	.midText {
+		position: absolute;
+		left: 50%;
+		background-color: #f2f2f5;
+		transform: translateX(-50%) translateY(-50%);
 	}
 </style>

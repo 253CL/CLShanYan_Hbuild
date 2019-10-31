@@ -1,6 +1,6 @@
 {
     "name" : "ShanYanPlugOnLine",
-    "appid" : "__UNI__5656820",
+    "appid" : "__UNI__5976DFC",
     "description" : "登录模板",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -47,15 +47,15 @@
         "nativePlugins" : {
             "CLSDK-ShanYanSDKModule" : {
                 "__plugin_info__" : {
-                    "name" : "闪验SDK_2.2.1",
-                    "description" : "本机号码一键登录",
+                    "name" : "CLSDK-ShanYanSDKModule",
+                    "description" : "闪验SDKHbuilder插件",
                     "platforms" : "Android,iOS",
-                    "url" : "https://ext.dcloud.net.cn/plugin?id=645",
+                    "url" : "",
                     "android_package_name" : "",
-                    "ios_bundle_id" : "com.253.QuanJu",
-                    "isCloud" : true,
-                    "bought" : 1,
-                    "pid" : "645",
+                    "ios_bundle_id" : "",
+                    "isCloud" : false,
+                    "bought" : -1,
+                    "pid" : "",
                     "parameters" : {}
                 }
             }

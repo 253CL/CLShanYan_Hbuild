@@ -1,53 +1,55 @@
 
+.result_group {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+	-webkit-box-pack: start;
+	-webkit-justify-content: flex-start;
+	    -ms-flex-pack: start;
+	        justify-content: flex-start;
+	background-color: #B9F6CA;
+	margin: 0 10rpx;
+	border-radius: 10rpx;
+}
 .action-row {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: row;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: row;
+	    -ms-flex-direction: row;
+	        flex-direction: row;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+	margin: 0 10rpx;
+	border-radius: 10rpx;
+	width: 100%;
 }
-.action-row navigator {
-    color: #007aff;
-    padding: 0 20rpx;
+.text_attr {
+	width: 95%;
+	margin-left: 30rpx;
+	margin-right: 30rpx;
+	word-wrap: break-word;
+	word-break: break-all;
 }
-.oauth-row {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: row;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-.oauth-image {
-    width: 100rpx;
-    height: 100rpx;
-    border: 1rpx solid #dddddd;
-    border-radius: 100rpx;
-    margin: 0 40rpx;
-    background-color: #ffffff;
-}
-.oauth-image image {
-    width: 60rpx;
-    height: 60rpx;
-    margin: 20rpx;
+.button_attr {
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+	margin-top: 30rpx;
+	margin-left: 15rpx;
+	margin-right: 15rpx;
+	margin-bottom: 30rpx;
 }
 
