@@ -59,11 +59,14 @@
 				account: '',
 				shanyan_code: '状态码',
 				shanyan_result: '信息描述',
+				
+				ios_uiConfigure: {}
 			}
 		},
 		computed: mapState(['forcedLogin']),
 		methods: {
 			init() {
+				//初始化建议在app启动时调用，即App.vue的onLaunch方法中
 				uni.showLoading({
 					mask: true,
 				})
@@ -80,7 +83,7 @@
 				}, result => {
 					uni.hideLoading();
 					this.shanyan_code = JSON.stringify(result.code);
-					this.shanyan_result = JSON.stringify(result.result);
+					this.shanyan_result = JSON.stringify(result);
 					console.log(JSON.stringify(result));
 				});
 
@@ -99,177 +102,611 @@
 						console.log(JSON.stringify(result));
 					});
 				} else if (platform == 'ios') {
-					//预取号
+					//闪验SDK 预取号
 					shanYanSDKModule.preGetPhonenumber((complete) => {
+						uni.hideLoading();
+						this.shanyan_code = JSON.stringify(complete.code);
+						this.shanyan_result = JSON.stringify(complete);
 						console.log(JSON.stringify(complete));
 					});
 				}
 			},
 			setAuthCJSThemeConfig() {
-				//闪验SDK  配置授权页方法
-				shanYanSDKModule.setAuthThemeConfig({
-					//授权页已有元素配置
-					uiConfig: {
-						setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
-						setNavColor: '#ff0000',
-						setLogoImgPath: 'static/logo_shanyan_text.png',
-						setAppPrivacyOne: {
-							title: '闪验用户协议',
-							url: "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html"
+				
+				let platform = uni.getSystemInfoSync().platform;
+				if (platform == 'android') {
+					//Android 全屏模式
+					
+					//闪验SDK  配置授权页方法
+					shanYanSDKModule.setAuthThemeConfig({
+						//授权页已有元素配置
+						uiConfig: {
+							setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
+							setNavColor: '#ff0000',
+							setLogoImgPath: 'static/logo_shanyan_text.png',
+							setAppPrivacyOne: {
+								title: '闪验用户协议',
+								url: "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html"
+							},
+							setAppPrivacyTwo: {
+								title: '闪验隐私政策',
+								url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+							},
+							setAppPrivacyThree: {
+								title: '服务协议',
+								url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+							},
+							setPrivacyState: false,
+							setPrivacyText: {
+								privacyTextOne: '登录即同意',
+								privacyTextTwo: "、",
+								privacyTextThree: '、',
+								privacyTextFour: '和',
+								privacyTextFive: '并授权登录'
+							},
+					
+						}, //授权页添加自定义控件元素
+						widgets: {
+							widget1: {
+								widgetId: "customView_one",
+								type: "TextView",
+								left: "",
+								top: "300",
+								right: "",
+								bottom: "",
+								width: "",
+								height: "30",
+								textContent: "自定义控件1（点击不销毁授权页）",
+								textFont: "13",
+								textColor: "#cc0000",
+								backgroundColor: "#ffffff",
+								isFinish: "false"
+							},
+							widget2: {
+								widgetId: "customView_two",
+								type: "TextView",
+								left: "",
+								top: "360",
+								right: "",
+								bottom: "",
+								width: "",
+								height: "30",
+								textContent: "自定义控件2（点击销毁授权页）",
+								textFont: "13",
+								textColor: "#cc0000",
+								backgroundColor: "#ffffff",
+								isFinish: "true"
+							},
+							widget3: {
+								widgetId: "customView_three",
+								type: "ImageView",
+								left: "",
+								top: "400",
+								right: "",
+								bottom: "",
+								width: "",
+								height: "",
+								backgroundImgPath: "static/qq.png",
+								isFinish: "true"
+							}
 						},
-						setAppPrivacyTwo: {
-							title: '闪验隐私政策',
-							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
-						},
-						setAppPrivacyThree: {
-							title: '服务协议',
-							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
-						},
-						setPrivacyState: false,
-						setPrivacyText: {
-							privacyTextOne: '登录即同意',
-							privacyTextTwo: "、",
-							privacyTextThree: '、',
-							privacyTextFour: '和',
-							privacyTextFive: '并授权登录'
-						},
+					}, result => {
+						console.log(JSON.stringify(result));
+					});
+					
+					this.shanyan_code = 1000;
+					this.shanyan_result = "授权页配置完成";
+					
+				}else if (platform == 'ios') {
+					
+					//iOS 全屏模式
+				
+					let screenWidth_Portrait = plus.screen.resolutionWidth; //竖屏宽
+					let screenHeight_Portrait = plus.screen.resolutionHeight; //竖屏宽
+					let screenWidth_Landscape = plus.screen.resolutionHeight; //横屏宽(即竖屏高)
+					let screenHeight_Landscape = plus.screen.resolutionWidth; //横屏高(即竖屏宽)
+					
+					var screenScale = screenWidth_Portrait / 375.0; //相对iphone6屏幕
+					if (screenScale > 1) {
+						screenScale = 1; //大屏的无需放大
+					}
+					
+					//竖屏
+					let clLayoutLogoTop_Portrait = screenScale * 60;
+					let clLayoutLogoWidth_Portrait = 60 * screenScale;
+					let clLayoutLogoHeight_Portrait = 60 * screenScale;
+					let clLayoutLogoCenterX_Portrait = 0;
+					
+					let clLayoutPhoneCenterY_Portrait = -20 * screenScale;
+					let clLayoutPhoneLeft_Portrait = 50 * screenScale;
+					let clLayoutPhoneRight_Portrait = -50 * screenScale;
+					let clLayoutPhoneHeight_Portrait = 20 * screenScale;
+					
+					let clLayoutLoginBtnCenterY_Portrait = clLayoutPhoneCenterY_Portrait + clLayoutPhoneHeight_Portrait * 0.5 *
+						screenScale + 20 * screenScale + 15 * screenScale;
+					let clLayoutLoginBtnHeight_Portrait = 30 * screenScale;
+					let clLayoutLoginBtnLeft_Portrait = 70 * screenScale;
+					let clLayoutLoginBtnRight_Portrait = -70 * screenScale;
+					
+					let clLayoutAppPrivacyLeft_Portrait = 40 * screenScale;
+					let clLayoutAppPrivacyRight_Portrait = -40 * screenScale;
+					let clLayoutAppPrivacyBottom_Portrait = 0 * screenScale;
+					let clLayoutAppPrivacyHeight_Portrait = 45 * screenScale;
+					
+					let clLayoutSloganLeft_Portrait = 0;
+					let clLayoutSloganRight_Portrait = 0;
+					let clLayoutSloganHeight_Portrait = 15 * screenScale;
+					let clLayoutSloganBottom_Portrait = clLayoutAppPrivacyBottom_Portrait - clLayoutAppPrivacyHeight_Portrait;
+					
+					//横屏 （如app本身不支持横屏，可不需设置横屏下UI配置）
+					
+					let clLayoutLogoWidth_Landscape = 60 * screenScale;
+					let clLayoutLogoHeight_Landscape = 60 * screenScale;
+					let clLayoutLogoCenterX_Landscape = 0;
+					let clLayoutLogoTop_Landscape = 25 * screenScale;
+					
+					let clLayoutPhoneCenterY_Landscape = -20 * screenScale;
+					let clLayoutPhoneLeft_Landscape = 50 * screenScale;
+					let clLayoutPhoneRight_Landscape = -50 * screenScale;
+					let clLayoutPhoneHeight_Landscape = 20 * screenScale;
+					
+					let clLayoutLoginBtnCenterY_Landscape = clLayoutPhoneCenterY_Landscape + clLayoutPhoneHeight_Landscape * 0.5 *
+						screenScale + 20 * screenScale + 15 * screenScale;
+					let clLayoutLoginBtnHeight_Landscape = 30 * screenScale;
+					let clLayoutLoginBtnLeft_Landscape = 70 * screenScale;
+					let clLayoutLoginBtnRight_Landscape = -70 * screenScale;
+					
+					let clLayoutAppPrivacyLeft_Landscape = 40 * screenScale;
+					let clLayoutAppPrivacyRight_Landscape = -40 * screenScale;
+					let clLayoutAppPrivacyBottom_Landscape = 0 * screenScale;
+					let clLayoutAppPrivacyHeight_Landscape = 45 * screenScale;
+					
+					let clLayoutSloganLeft_Landscape = 0;
+					let clLayoutSloganRight_Landscape = 0;
+					let clLayoutSloganHeight_Landscape = 15 * screenScale;
+					let clLayoutSloganBottom_Landscape = clLayoutAppPrivacyBottom_Landscape - clLayoutAppPrivacyHeight_Landscape;
+					
+					this.ios_uiConfigure = 
+					{
+					
+						clBackgroundImg: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
+									
+						shouldAutorotate: true,
+						/**支持方向
+						 * 如支持横竖屏，需同时设置 clOrientationLayOutPortrait 和 clOrientationLayOutLandscape
+						 * 0:UIInterfaceOrientationMaskPortrait
+						 * 1:UIInterfaceOrientationMaskLandscapeLeft
+						 * 2:UIInterfaceOrientationMaskLandscapeRight
+						 * 3:UIInterfaceOrientationMaskPortraitUpsideDown
+						 * 4:UIInterfaceOrientationMaskLandscape
+						 * 5:UIInterfaceOrientationMaskAll
+						 * 6:UIInterfaceOrientationMaskAllButUpsideDown
+						 * */
+						supportedInterfaceOrientations: 5,
+									
+						/**偏好方向 
+						 * -1:UIInterfaceOrientationUnknown
+						 * 0:UIInterfaceOrientationPortrait
+						 * 1:UIInterfaceOrientationPortraitUpsideDown
+						 * 2:UIInterfaceOrientationLandscapeLeft
+						 * 3:UIInterfaceOrientationLandscapeRight
+						 * */
+						//偏好方向默认Portrait preferredInterfaceOrientationForPresentation: Number(5),
+									
+						clNavigationBackgroundClear: true, //导航栏透明
+						clNavigationBackBtnImage: "static/img/close-white.png", //返回按钮图片
+						clNavBackBtnAlimentRight: true, //返回按钮居右
+									
+						clLogoImage: "static/img/logo_shanyan_text.png", //logo图片
+									
+						clLoginBtnText: "本机号一键登录", //一键登录按钮文字
+						clLoginBtnTextColor: [1, 1, 1, 1.0], //rgba
+						clLoginBtnBgColor: [0.2, 0.8, 0.2, 1.0], //rgba
+						clLoginBtnTextFont: 15 * screenScale,
+						clLoginBtnCornerRadius: 10,
+						clLoginBtnBorderWidth: 0.5,
+						clLoginBtnBorderColor: [0.1, 0.8, 0.1, 1.0], //rgba 
+									
+						clPhoneNumberFont: 20.0 * screenScale,
+									
+						clAppPrivacyColor: [
+							[0.6, 0.6, 0.6, 1.0],
+							[0, 1, 0, 1.0]
+						], //2 item,commomTextColor and appPrivacyTextColor
+						clAppPrivacyTextFont: 11 * screenScale,
+						clAppPrivacyTextAlignment: 0, //0: center 1: left 2: right
+						clAppPrivacyFirst: ["测试连接A", "https://www.baidu.com"], // 2 item, name and url
+						clAppPrivacySecond: ["测试连接B", "https://www.sina.com"], // 2 item, name and url
+									
+						clCheckBoxVerticalAlignmentToAppPrivacyCenterY: true,
+						clCheckBoxSize: [30 * screenScale, 30 * screenScale], //2 item, width and height
+						clCheckBoxImageEdgeInsets: [2 * screenScale, 10 * screenScale, 13 * screenScale, 5 * screenScale], //4 item, top left bottom right
+						clCheckBoxUncheckedImage: "static/img/checkBoxNor.png",
+						clCheckBoxCheckedImage: "static/img/checkBoxSEL.png",
+									
+						clLoadingSize: [50, 50], //2 item, width and height
+						clLoadingTintColor: [0.2, 0.8, 0.2, 1],
+						clLoadingBackgroundColor: [1, 1, 1, 1],
+						clLoadingCornerRadius: 5,
+									
+						//竖屏布局对象
+						clOrientationLayOutPortrait: {
 
-					}, //授权页添加自定义控件元素
-					widgets: {
-						widget1: {
-							widgetId: "customView_one",
-							type: "TextView",
-							left: "",
-							top: "300",
-							right: "",
-							bottom: "",
-							width: "",
-							height: "30",
-							textContent: "自定义控件1（点击不销毁授权页）",
-							textFont: "13",
-							textColor: "#cc0000",
-							backgroundColor: "#ffffff",
-							isFinish: "false"
+							//控件
+							clLayoutLogoWidth: clLayoutLogoWidth_Portrait,
+							clLayoutLogoHeight: clLayoutLogoHeight_Portrait,
+							clLayoutLogoCenterX: clLayoutLogoCenterX_Portrait,
+							clLayoutLogoTop: clLayoutLogoTop_Portrait,
+									
+							clLayoutPhoneCenterY: clLayoutPhoneCenterY_Portrait,
+							clLayoutPhoneHeight: clLayoutPhoneHeight_Portrait,
+							clLayoutPhoneLeft: clLayoutPhoneLeft_Portrait,
+							clLayoutPhoneRight: clLayoutPhoneRight_Portrait,
+									
+							clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Portrait,
+							clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Portrait,
+							clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Portrait,
+							clLayoutLoginBtnRight: clLayoutLoginBtnRight_Portrait,
+									
+							clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Portrait,
+							clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Portrait,
+							clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Portrait,
+							clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Portrait,
+									
+							clLayoutSloganLeft: clLayoutSloganLeft_Portrait,
+							clLayoutSloganRight: clLayoutSloganRight_Portrait,
+							clLayoutSloganHeight: clLayoutSloganHeight_Portrait,
+							clLayoutSloganBottom: clLayoutSloganBottom_Portrait,
 						},
-						widget2: {
-							widgetId: "customView_two",
-							type: "TextView",
-							left: "",
-							top: "360",
-							right: "",
-							bottom: "",
-							width: "",
-							height: "30",
-							textContent: "自定义控件2（点击销毁授权页）",
-							textFont: "13",
-							textColor: "#cc0000",
-							backgroundColor: "#ffffff",
-							isFinish: "true"
+						//横屏布局对象 （如app本身不支持横屏，可不需设置横屏下UI配置对象）
+						clOrientationLayOutLandscape: {
+	
+							//控件
+							clLayoutLogoWidth: clLayoutLogoWidth_Landscape,
+							clLayoutLogoHeight: clLayoutLogoHeight_Landscape,
+							clLayoutLogoCenterX: clLayoutLogoCenterX_Landscape,
+							clLayoutLogoTop: clLayoutLogoTop_Landscape,
+									
+							clLayoutPhoneCenterY: clLayoutPhoneCenterY_Landscape,
+							clLayoutPhoneHeight: clLayoutPhoneHeight_Landscape,
+							clLayoutPhoneLeft: clLayoutPhoneLeft_Landscape,
+							clLayoutPhoneRight: clLayoutPhoneRight_Landscape,
+									
+							clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Landscape,
+							clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Landscape,
+							clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Landscape,
+							clLayoutLoginBtnRight: clLayoutLoginBtnRight_Landscape,
+									
+							clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Landscape,
+							clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Landscape,
+							clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Landscape,
+							clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Landscape,
+									
+							clLayoutSloganLeft: clLayoutSloganLeft_Landscape,
+							clLayoutSloganRight: clLayoutSloganRight_Landscape,
+							clLayoutSloganHeight: clLayoutSloganHeight_Landscape,
+							clLayoutSloganBottom: clLayoutSloganBottom_Landscape,
 						},
-						widget3: {
-							widgetId: "customView_three",
-							type: "ImageView",
-							left: "",
-							top: "400",
-							right: "",
-							bottom: "",
-							width: "",
-							height: "",
-							backgroundImgPath: "static/qq.png",
-							isFinish: "true"
-						}
-					},
-				}, result => {
-					console.log(JSON.stringify(result));
-				});
-
-				this.shanyan_code = 1000;
-				this.shanyan_result = "授权页配置完成";
+					}
+					this.shanyan_code = 1000;
+					this.shanyan_result = "授权页配置完成";
+					
+				}
 			},
 			setAuthDialogThemeConfig() {
-				shanYanSDKModule.setAuthThemeConfig({
-					//授权页已有元素配置
-					uiConfig: {
-						setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
-						setNavColor: '#ff0000',
-						setNavText: "",
-						setNavTextSize: "0",
-						setNavReturnImgPath: "static/close_black.png",
-						setNavReturnBtnOffsetRightX: "15",
-						setLogoImgPath: 'static/logo_shanyan_text.png',
-						setLogoOffsetY: "15",
-						setLogoWidth: "110",
-						setLogoHeight: "60",
-						setNumFieldOffsetY: "80",
-						setNumberSize: "18",
-						setLogBtnText: "本机号码免密登录",
-						setLogBtnOffsetY: "140",
-						setPrivacyState:"true",
-						setAppPrivacyOne: {
-							title: '闪验用户协议',
-							url: "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html"
+				
+				let platform = uni.getSystemInfoSync().platform;
+				if (platform == 'android') {
+					//Android 弹窗模式
+					
+					shanYanSDKModule.setAuthThemeConfig({
+						//授权页已有元素配置
+						uiConfig: {
+							setAuthBGImgPath: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
+							setNavColor: '#ff0000',
+							setNavText: "",
+							setNavTextSize: "0",
+							setNavReturnImgPath: "static/close_black.png",
+							setNavReturnBtnOffsetRightX: "15",
+							setLogoImgPath: 'static/logo_shanyan_text.png',
+							setLogoOffsetY: "15",
+							setLogoWidth: "110",
+							setLogoHeight: "60",
+							setNumFieldOffsetY: "80",
+							setNumberSize: "18",
+							setLogBtnText: "本机号码免密登录",
+							setLogBtnOffsetY: "140",
+							setPrivacyState:"true",
+							setAppPrivacyOne: {
+								title: '闪验用户协议',
+								url: "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html"
+							},
+							setAppPrivacyTwo: {
+								title: '闪验隐私政策',
+								url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+							},
+							setAppPrivacyThree: {
+								title: '服务协议',
+								url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+							},
+							setPrivacyText: {
+								privacyTextOne: '登录即同意',
+								privacyTextTwo: "、",
+								privacyTextThree: '、',
+								privacyTextFour: '和',
+								privacyTextFive: '并授权登录'
+							},
+							setSloganHidden: "true",
+							setDialogTheme: {
+								width: "300",
+								height: "400",
+								marginLeft: "0",
+								marginTop: "0",
+								isBottom: "false"
+							}
+					
+						}, //授权页添加自定义控件元素
+						widgets: {
+							widget1: {
+								widgetId: "customView_one",
+								type: "TextView",
+								left: "",
+								top: "195",
+								right: "",
+								bottom: "",
+								width: "",
+								height: "30",
+								textContent: "自定义控件（不销毁授权页）",
+								textFont: "13",
+								textColor: "#cc0000",
+								backgroundColor: "#ffffff",
+								isFinish: "false"
+							},
+							widget2: {
+								widgetId: "customView_two",
+								type: "ImageView",
+								left: "",
+								top: "230",
+								right: "",
+								bottom: "",
+								width: "30",
+								height: "30",
+								backgroundImgPath: "static/qq.png",
+								isFinish: "true"
+							}
 						},
-						setAppPrivacyTwo: {
-							title: '闪验隐私政策',
-							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+					}, result => {
+						console.log(JSON.stringify(result));
+					
+					});
+					
+					this.shanyan_code = 1000;
+					this.shanyan_result = "授权页配置完成";
+					
+				}else if (platform == 'ios') {
+					
+					//iOS 弹窗模式
+					
+					let screenWidth_Portrait = plus.screen.resolutionWidth; //竖屏宽
+					let screenHeight_Portrait = plus.screen.resolutionHeight; //竖屏宽
+					let screenWidth_Landscape = plus.screen.resolutionHeight; //横屏宽(即竖屏高)
+					let screenHeight_Landscape = plus.screen.resolutionWidth; //横屏高(即竖屏宽)
+					
+					var screenScale = screenWidth_Portrait / 375.0; //相对iphone6屏幕
+					if (screenScale > 1) {
+						screenScale = 1; //大屏的无需放大
+					}
+					
+					//竖屏
+					//窗口中心
+					let clAuthWindowOrientationCenterX_Portrait = screenWidth_Portrait * 0.5;
+					let clAuthWindowOrientationCenterY_Portrait = screenHeight_Portrait * 0.5;
+					
+					//窗口宽高
+					let clAuthWindowOrientationWidth_Portrait = screenWidth_Portrait * 0.8;
+					let clAuthWindowOrientationHeight_Portrait = clAuthWindowOrientationWidth_Portrait * 0.8;
+					
+					let clLayoutLogoTop_Portrait = screenScale * 25;
+					let clLayoutLogoWidth_Portrait = 60 * screenScale;
+					let clLayoutLogoHeight_Portrait = 60 * screenScale;
+					let clLayoutLogoCenterX_Portrait = 0;
+					
+					let clLayoutPhoneCenterY_Portrait = -20 * screenScale;
+					let clLayoutPhoneLeft_Portrait = 50 * screenScale;
+					let clLayoutPhoneRight_Portrait = -50 * screenScale;
+					let clLayoutPhoneHeight_Portrait = 20 * screenScale;
+					
+					let clLayoutLoginBtnCenterY_Portrait = clLayoutPhoneCenterY_Portrait + clLayoutPhoneHeight_Portrait * 0.5 *
+						screenScale + 20 * screenScale + 15 * screenScale;
+					let clLayoutLoginBtnHeight_Portrait = 30 * screenScale;
+					let clLayoutLoginBtnLeft_Portrait = 70 * screenScale;
+					let clLayoutLoginBtnRight_Portrait = -70 * screenScale;
+					
+					let clLayoutAppPrivacyLeft_Portrait = 40 * screenScale;
+					let clLayoutAppPrivacyRight_Portrait = -40 * screenScale;
+					let clLayoutAppPrivacyBottom_Portrait = 0 * screenScale;
+					let clLayoutAppPrivacyHeight_Portrait = 45 * screenScale;
+					
+					let clLayoutSloganLeft_Portrait = 0;
+					let clLayoutSloganRight_Portrait = 0;
+					let clLayoutSloganHeight_Portrait = 15 * screenScale;
+					let clLayoutSloganBottom_Portrait = clLayoutAppPrivacyBottom_Portrait - clLayoutAppPrivacyHeight_Portrait;
+					
+					//横屏
+					//窗口中心
+					let clAuthWindowOrientationCenterX_Landscape = screenWidth_Landscape * 0.5;
+					let clAuthWindowOrientationCenterY_Landscape = screenHeight_Landscape * 0.5;
+					
+					//窗口宽高
+					let clAuthWindowOrientationWidth_Landscape = screenWidth_Portrait * 0.8; //窗口宽度为竖屏宽度的0.8;
+					let clAuthWindowOrientationHeight_Landscape = clAuthWindowOrientationWidth_Landscape * 0.8; //窗口高度为窗口宽度的0.8
+					
+					let clLayoutLogoWidth_Landscape = 60 * screenScale;
+					let clLayoutLogoHeight_Landscape = 60 * screenScale;
+					let clLayoutLogoCenterX_Landscape = 0;
+					let clLayoutLogoTop_Landscape = 25 * screenScale;
+					
+					let clLayoutPhoneCenterY_Landscape = -20 * screenScale;
+					let clLayoutPhoneLeft_Landscape = 50 * screenScale;
+					let clLayoutPhoneRight_Landscape = -50 * screenScale;
+					let clLayoutPhoneHeight_Landscape = 20 * screenScale;
+					
+					let clLayoutLoginBtnCenterY_Landscape = clLayoutPhoneCenterY_Landscape + clLayoutPhoneHeight_Landscape * 0.5 *
+						screenScale + 20 * screenScale + 15 * screenScale;
+					let clLayoutLoginBtnHeight_Landscape = 30 * screenScale;
+					let clLayoutLoginBtnLeft_Landscape = 70 * screenScale;
+					let clLayoutLoginBtnRight_Landscape = -70 * screenScale;
+					
+					let clLayoutAppPrivacyLeft_Landscape = 40 * screenScale;
+					let clLayoutAppPrivacyRight_Landscape = -40 * screenScale;
+					let clLayoutAppPrivacyBottom_Landscape = 0 * screenScale;
+					let clLayoutAppPrivacyHeight_Landscape = 45 * screenScale;
+					
+					let clLayoutSloganLeft_Landscape = 0;
+					let clLayoutSloganRight_Landscape = 0;
+					let clLayoutSloganHeight_Landscape = 15 * screenScale;
+					let clLayoutSloganBottom_Landscape = clLayoutAppPrivacyBottom_Landscape - clLayoutAppPrivacyHeight_Landscape;
+					
+					this.ios_uiConfigure = 
+					{
+					
+						clBackgroundImg: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
+				
+						shouldAutorotate: true,
+						/**支持方向
+						 * 如支持横竖屏，需同时设置 clOrientationLayOutPortrait 和 clOrientationLayOutLandscape
+						 * 0:UIInterfaceOrientationMaskPortrait
+						 * 1:UIInterfaceOrientationMaskLandscapeLeft
+						 * 2:UIInterfaceOrientationMaskLandscapeRight
+						 * 3:UIInterfaceOrientationMaskPortraitUpsideDown
+						 * 4:UIInterfaceOrientationMaskLandscape
+						 * 5:UIInterfaceOrientationMaskAll
+						 * 6:UIInterfaceOrientationMaskAllButUpsideDown
+						 * */
+						supportedInterfaceOrientations: 5,
+				
+						/**偏好方向 
+						 * -1:UIInterfaceOrientationUnknown
+						 * 0:UIInterfaceOrientationPortrait
+						 * 1:UIInterfaceOrientationPortraitUpsideDown
+						 * 2:UIInterfaceOrientationLandscapeLeft
+						 * 3:UIInterfaceOrientationLandscapeRight
+						 * */
+						//偏好方向默认Portrait preferredInterfaceOrientationForPresentation: Number(5),
+				
+						clNavigationBackgroundClear: true, //导航栏透明
+						clNavigationBackBtnImage: "static/img/close-white.png", //返回按钮图片
+						clNavBackBtnAlimentRight: true, //返回按钮居右
+				
+						clLogoImage: "static/img/logo_shanyan_text.png", //logo图片
+				
+						clLoginBtnText: "本机号一键登录", //一键登录按钮文字
+						clLoginBtnTextColor: [1, 1, 1, 1.0], //rgba
+						clLoginBtnBgColor: [0.2, 0.8, 0.2, 1.0], //rgba
+						clLoginBtnTextFont: 15 * screenScale,
+						clLoginBtnCornerRadius: 10,
+						clLoginBtnBorderWidth: 0.5,
+						clLoginBtnBorderColor: [0.1, 0.8, 0.1, 1.0], //rgba 
+				
+						clPhoneNumberFont: 20.0 * screenScale,
+				
+						clAuthTypeUseWindow: true,
+						clAuthWindowCornerRadius: 20,
+				
+						clAppPrivacyColor: [
+							[0.6, 0.6, 0.6, 1.0],
+							[0, 1, 0, 1.0]
+						], //2 item,commomTextColor and appPrivacyTextColor
+						clAppPrivacyTextFont: 11 * screenScale,
+						clAppPrivacyTextAlignment: 0, //0: center 1: left 2: right
+						clAppPrivacyFirst: ["测试连接A", "https://www.baidu.com"], // 2 item, name and url
+						clAppPrivacySecond: ["测试连接B", "https://www.sina.com"], // 2 item, name and url
+				
+						clCheckBoxVerticalAlignmentToAppPrivacyCenterY: true,
+						clCheckBoxSize: [30 * screenScale, 30 * screenScale], //2 item, width and height
+						clCheckBoxImageEdgeInsets: [2 * screenScale, 10 * screenScale, 13 * screenScale, 5 * screenScale], //4 item, top left bottom right
+						clCheckBoxUncheckedImage: "static/img/checkBoxNor.png",
+						clCheckBoxCheckedImage: "static/img/checkBoxSEL.png",
+				
+						clLoadingSize: [50, 50], //2 item, width and height
+						clLoadingTintColor: [0.2, 0.8, 0.2, 1],
+						clLoadingBackgroundColor: [1, 1, 1, 1],
+						clLoadingCornerRadius: 5,
+				
+						//竖屏布局对象
+						clOrientationLayOutPortrait: {
+							//窗口
+							clAuthWindowOrientationWidth: clAuthWindowOrientationWidth_Portrait,
+							clAuthWindowOrientationHeight: clAuthWindowOrientationHeight_Portrait,
+				
+							clAuthWindowOrientationCenterX: clAuthWindowOrientationCenterX_Portrait,
+							clAuthWindowOrientationCenterY: clAuthWindowOrientationCenterY_Portrait,
+				
+							//控件
+							clLayoutLogoWidth: clLayoutLogoWidth_Portrait,
+							clLayoutLogoHeight: clLayoutLogoHeight_Portrait,
+							clLayoutLogoCenterX: clLayoutLogoCenterX_Portrait,
+							clLayoutLogoTop: clLayoutLogoTop_Portrait,
+				
+							clLayoutPhoneCenterY: clLayoutPhoneCenterY_Portrait,
+							clLayoutPhoneHeight: clLayoutPhoneHeight_Portrait,
+							clLayoutPhoneLeft: clLayoutPhoneLeft_Portrait,
+							clLayoutPhoneRight: clLayoutPhoneRight_Portrait,
+				
+							clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Portrait,
+							clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Portrait,
+							clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Portrait,
+							clLayoutLoginBtnRight: clLayoutLoginBtnRight_Portrait,
+				
+							clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Portrait,
+							clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Portrait,
+							clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Portrait,
+							clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Portrait,
+				
+							clLayoutSloganLeft: clLayoutSloganLeft_Portrait,
+							clLayoutSloganRight: clLayoutSloganRight_Portrait,
+							clLayoutSloganHeight: clLayoutSloganHeight_Portrait,
+							clLayoutSloganBottom: clLayoutSloganBottom_Portrait,
 						},
-						setAppPrivacyThree: {
-							title: '服务协议',
-							url: "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html"
+						//横屏布局对象
+						clOrientationLayOutLandscape: {
+							//窗口
+							clAuthWindowOrientationWidth: clAuthWindowOrientationWidth_Landscape,
+							clAuthWindowOrientationHeight: clAuthWindowOrientationHeight_Landscape,
+				
+							clAuthWindowOrientationCenterX: clAuthWindowOrientationCenterX_Landscape,
+							clAuthWindowOrientationCenterY: clAuthWindowOrientationCenterY_Landscape,
+				
+							//控件
+							clLayoutLogoWidth: clLayoutLogoWidth_Landscape,
+							clLayoutLogoHeight: clLayoutLogoHeight_Landscape,
+							clLayoutLogoCenterX: clLayoutLogoCenterX_Landscape,
+							clLayoutLogoTop: clLayoutLogoTop_Landscape,
+				
+							clLayoutPhoneCenterY: clLayoutPhoneCenterY_Landscape,
+							clLayoutPhoneHeight: clLayoutPhoneHeight_Landscape,
+							clLayoutPhoneLeft: clLayoutPhoneLeft_Landscape,
+							clLayoutPhoneRight: clLayoutPhoneRight_Landscape,
+				
+							clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Landscape,
+							clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Landscape,
+							clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Landscape,
+							clLayoutLoginBtnRight: clLayoutLoginBtnRight_Landscape,
+				
+							clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Landscape,
+							clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Landscape,
+							clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Landscape,
+							clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Landscape,
+				
+							clLayoutSloganLeft: clLayoutSloganLeft_Landscape,
+							clLayoutSloganRight: clLayoutSloganRight_Landscape,
+							clLayoutSloganHeight: clLayoutSloganHeight_Landscape,
+							clLayoutSloganBottom: clLayoutSloganBottom_Landscape,
 						},
-						setPrivacyText: {
-							privacyTextOne: '登录即同意',
-							privacyTextTwo: "、",
-							privacyTextThree: '、',
-							privacyTextFour: '和',
-							privacyTextFive: '并授权登录'
-						},
-						setSloganHidden: "true",
-						setDialogTheme: {
-							width: "300",
-							height: "400",
-							marginLeft: "0",
-							marginTop: "0",
-							isBottom: "false"
-						}
-
-					}, //授权页添加自定义控件元素
-					widgets: {
-						widget1: {
-							widgetId: "customView_one",
-							type: "TextView",
-							left: "",
-							top: "195",
-							right: "",
-							bottom: "",
-							width: "",
-							height: "30",
-							textContent: "自定义控件（不销毁授权页）",
-							textFont: "13",
-							textColor: "#cc0000",
-							backgroundColor: "#ffffff",
-							isFinish: "false"
-						},
-						widget2: {
-							widgetId: "customView_two",
-							type: "ImageView",
-							left: "",
-							top: "230",
-							right: "",
-							bottom: "",
-							width: "30",
-							height: "30",
-							backgroundImgPath: "static/qq.png",
-							isFinish: "true"
-						}
-					},
-				}, result => {
-					console.log(JSON.stringify(result));
-
-				});
-
-				this.shanyan_code = 1000;
-				this.shanyan_result = "授权页配置完成";
+					}
+					this.shanyan_code = 1000;
+					this.shanyan_result = "授权页配置完成";
+				}
 			},
 			startAuthentication() {
 				uni.showLoading({
@@ -307,229 +744,21 @@
 						});
 
 				} else if (platform == 'ios') {
-					//iOS一键登录
+					/*************************iOS*************************/
+					//闪验SDK  拉起授权页方法
 
-					//弹窗方式
-
-					//配置界面
-
-					let screenWidth_Portrait = plus.screen.resolutionWidth; //竖屏宽
-					let screenHeight_Portrait = plus.screen.resolutionHeight; //竖屏宽
-					let screenWidth_Landscape = plus.screen.resolutionHeight; //横屏宽(即竖屏高)
-					let screenHeight_Landscape = plus.screen.resolutionWidth; //横屏高(即竖屏宽)
-
-					var screenScale = screenWidth_Portrait / 375.0; //相对iphone6屏幕
-					if (screenScale > 1) {
-						screenScale = 1; //大屏的无需放大
+					if(this.ios_uiConfigure == null){
+						//debug_test
+						uni.showToast({
+							icon: "none",
+							title: "请先配置UI",
+							duration: 3000
+						});
+						return;
 					}
 
-					//竖屏
-					//窗口中心
-					let clAuthWindowOrientationCenterX_Portrait = screenWidth_Portrait * 0.5;
-					let clAuthWindowOrientationCenterY_Portrait = screenHeight_Portrait * 0.5;
-
-					//窗口宽高
-					let clAuthWindowOrientationWidth_Portrait = screenWidth_Portrait * 0.8;
-					let clAuthWindowOrientationHeight_Portrait = clAuthWindowOrientationWidth_Portrait * 0.8;
-
-					let clLayoutLogoTop_Portrait = screenScale * 25;
-					let clLayoutLogoWidth_Portrait = 60 * screenScale;
-					let clLayoutLogoHeight_Portrait = 60 * screenScale;
-					let clLayoutLogoCenterX_Portrait = 0;
-
-					let clLayoutPhoneCenterY_Portrait = -20 * screenScale;
-					let clLayoutPhoneLeft_Portrait = 50 * screenScale;
-					let clLayoutPhoneRight_Portrait = -50 * screenScale;
-					let clLayoutPhoneHeight_Portrait = 20 * screenScale;
-
-					let clLayoutLoginBtnCenterY_Portrait = clLayoutPhoneCenterY_Portrait + clLayoutPhoneHeight_Portrait * 0.5 *
-						screenScale + 20 * screenScale + 15 * screenScale;
-					let clLayoutLoginBtnHeight_Portrait = 30 * screenScale;
-					let clLayoutLoginBtnLeft_Portrait = 70 * screenScale;
-					let clLayoutLoginBtnRight_Portrait = -70 * screenScale;
-
-					let clLayoutAppPrivacyLeft_Portrait = 40 * screenScale;
-					let clLayoutAppPrivacyRight_Portrait = -40 * screenScale;
-					let clLayoutAppPrivacyBottom_Portrait = 0 * screenScale;
-					let clLayoutAppPrivacyHeight_Portrait = 45 * screenScale;
-
-					let clLayoutSloganLeft_Portrait = 0;
-					let clLayoutSloganRight_Portrait = 0;
-					let clLayoutSloganHeight_Portrait = 15 * screenScale;
-					let clLayoutSloganBottom_Portrait = clLayoutAppPrivacyBottom_Portrait - clLayoutAppPrivacyHeight_Portrait;
-
-					//横屏
-					//窗口中心
-					let clAuthWindowOrientationCenterX_Landscape = screenWidth_Landscape * 0.5;
-					let clAuthWindowOrientationCenterY_Landscape = screenHeight_Landscape * 0.5;
-
-					//窗口宽高
-					let clAuthWindowOrientationWidth_Landscape = screenWidth_Portrait * 0.8; //窗口宽度为竖屏宽度的0.8;
-					let clAuthWindowOrientationHeight_Landscape = clAuthWindowOrientationWidth_Landscape * 0.8; //窗口高度为窗口宽度的0.8
-
-					let clLayoutLogoWidth_Landscape = 60 * screenScale;
-					let clLayoutLogoHeight_Landscape = 60 * screenScale;
-					let clLayoutLogoCenterX_Landscape = 0;
-					let clLayoutLogoTop_Landscape = 25 * screenScale;
-
-					let clLayoutPhoneCenterY_Landscape = -20 * screenScale;
-					let clLayoutPhoneLeft_Landscape = 50 * screenScale;
-					let clLayoutPhoneRight_Landscape = -50 * screenScale;
-					let clLayoutPhoneHeight_Landscape = 20 * screenScale;
-
-					let clLayoutLoginBtnCenterY_Landscape = clLayoutPhoneCenterY_Landscape + clLayoutPhoneHeight_Landscape * 0.5 *
-						screenScale + 20 * screenScale + 15 * screenScale;
-					let clLayoutLoginBtnHeight_Landscape = 30 * screenScale;
-					let clLayoutLoginBtnLeft_Landscape = 70 * screenScale;
-					let clLayoutLoginBtnRight_Landscape = -70 * screenScale;
-
-					let clLayoutAppPrivacyLeft_Landscape = 40 * screenScale;
-					let clLayoutAppPrivacyRight_Landscape = -40 * screenScale;
-					let clLayoutAppPrivacyBottom_Landscape = 0 * screenScale;
-					let clLayoutAppPrivacyHeight_Landscape = 45 * screenScale;
-
-					let clLayoutSloganLeft_Landscape = 0;
-					let clLayoutSloganRight_Landscape = 0;
-					let clLayoutSloganHeight_Landscape = 15 * screenScale;
-					let clLayoutSloganBottom_Landscape = clLayoutAppPrivacyBottom_Landscape - clLayoutAppPrivacyHeight_Landscape;
-
 					//一键登录
-					shanYanSDKModule.quickAuthLoginWithConfigure({
-
-							clBackgroundImg: "static/eb9a0dae18491990a43fe02832d3cafa.jpg",
-
-							shouldAutorotate: true,
-							/**支持方向
-							 * 如支持横竖屏，需同时设置 clOrientationLayOutPortrait 和 clOrientationLayOutLandscape
-							 * 0:UIInterfaceOrientationMaskPortrait
-							 * 1:UIInterfaceOrientationMaskLandscapeLeft
-							 * 2:UIInterfaceOrientationMaskLandscapeRight
-							 * 3:UIInterfaceOrientationMaskPortraitUpsideDown
-							 * 4:UIInterfaceOrientationMaskLandscape
-							 * 5:UIInterfaceOrientationMaskAll
-							 * 6:UIInterfaceOrientationMaskAllButUpsideDown
-							 * */
-							supportedInterfaceOrientations: 5,
-
-							/**偏好方向 
-							 * -1:UIInterfaceOrientationUnknown
-							 * 0:UIInterfaceOrientationPortrait
-							 * 1:UIInterfaceOrientationPortraitUpsideDown
-							 * 2:UIInterfaceOrientationLandscapeLeft
-							 * 3:UIInterfaceOrientationLandscapeRight
-							 * */
-							//偏好方向默认Portrait preferredInterfaceOrientationForPresentation: Number(5),
-
-							clNavigationBackgroundClear: true, //导航栏透明
-							clNavigationBackBtnImage: "static/img/close-white.png", //返回按钮图片
-							clNavBackBtnAlimentRight: true, //返回按钮居右
-
-							clLogoImage: "static/img/logo_shanyan_text.png", //logo图片
-
-							clLoginBtnText: "本机号一键登录", //一键登录按钮文字
-							clLoginBtnTextColor: [1, 1, 1, 1.0], //rgba
-							clLoginBtnBgColor: [0.2, 0.8, 0.2, 1.0], //rgba
-							clLoginBtnTextFont: 15 * screenScale,
-							clLoginBtnCornerRadius: 10,
-							clLoginBtnBorderWidth: 0.5,
-							clLoginBtnBorderColor: [0.1, 0.8, 0.1, 1.0], //rgba 
-
-							clPhoneNumberFont: 20.0 * screenScale,
-
-							clAuthTypeUseWindow: true,
-							clAuthWindowCornerRadius: 20,
-
-							clAppPrivacyColor: [
-								[0.6, 0.6, 0.6, 1.0],
-								[0, 1, 0, 1.0]
-							], //2 item,commomTextColor and appPrivacyTextColor
-							clAppPrivacyTextFont: 11 * screenScale,
-							clAppPrivacyTextAlignment: 0, //0: center 1: left 2: right
-							clAppPrivacyFirst: ["测试连接A", "https://www.baidu.com"], // 2 item, name and url
-							clAppPrivacySecond: ["测试连接B", "https://www.sina.com"], // 2 item, name and url
-
-							clCheckBoxVerticalAlignmentToAppPrivacyCenterY: true,
-							clCheckBoxSize: [30 * screenScale, 30 * screenScale], //2 item, width and height
-							clCheckBoxImageEdgeInsets: [2 * screenScale, 10 * screenScale, 13 * screenScale, 5 * screenScale], //4 item, top left bottom right
-							clCheckBoxUncheckedImage: "static/img/checkBoxNor.png",
-							clCheckBoxCheckedImage: "static/img/checkBoxSEL.png",
-
-							clLoadingSize: [50, 50], //2 item, width and height
-							clLoadingTintColor: [0.2, 0.8, 0.2, 1],
-							clLoadingBackgroundColor: [1, 1, 1, 1],
-							clLoadingCornerRadius: 5,
-
-							//竖屏布局对象
-							clOrientationLayOutPortrait: {
-								//窗口
-								clAuthWindowOrientationWidth: clAuthWindowOrientationWidth_Portrait,
-								clAuthWindowOrientationHeight: clAuthWindowOrientationHeight_Portrait,
-
-								clAuthWindowOrientationCenterX: clAuthWindowOrientationCenterX_Portrait,
-								clAuthWindowOrientationCenterY: clAuthWindowOrientationCenterY_Portrait,
-
-								//控件
-								clLayoutLogoWidth: clLayoutLogoWidth_Portrait,
-								clLayoutLogoHeight: clLayoutLogoHeight_Portrait,
-								clLayoutLogoCenterX: clLayoutLogoCenterX_Portrait,
-								clLayoutLogoTop: clLayoutLogoTop_Portrait,
-
-								clLayoutPhoneCenterY: clLayoutPhoneCenterY_Portrait,
-								clLayoutPhoneHeight: clLayoutPhoneHeight_Portrait,
-								clLayoutPhoneLeft: clLayoutPhoneLeft_Portrait,
-								clLayoutPhoneRight: clLayoutPhoneRight_Portrait,
-
-								clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Portrait,
-								clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Portrait,
-								clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Portrait,
-								clLayoutLoginBtnRight: clLayoutLoginBtnRight_Portrait,
-
-								clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Portrait,
-								clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Portrait,
-								clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Portrait,
-								clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Portrait,
-
-								clLayoutSloganLeft: clLayoutSloganLeft_Portrait,
-								clLayoutSloganRight: clLayoutSloganRight_Portrait,
-								clLayoutSloganHeight: clLayoutSloganHeight_Portrait,
-								clLayoutSloganBottom: clLayoutSloganBottom_Portrait,
-							},
-							//横屏布局对象
-							clOrientationLayOutLandscape: {
-								//窗口
-								clAuthWindowOrientationWidth: clAuthWindowOrientationWidth_Landscape,
-								clAuthWindowOrientationHeight: clAuthWindowOrientationHeight_Landscape,
-
-								clAuthWindowOrientationCenterX: clAuthWindowOrientationCenterX_Landscape,
-								clAuthWindowOrientationCenterY: clAuthWindowOrientationCenterY_Landscape,
-
-								//控件
-								clLayoutLogoWidth: clLayoutLogoWidth_Landscape,
-								clLayoutLogoHeight: clLayoutLogoHeight_Landscape,
-								clLayoutLogoCenterX: clLayoutLogoCenterX_Landscape,
-								clLayoutLogoTop: clLayoutLogoTop_Landscape,
-
-								clLayoutPhoneCenterY: clLayoutPhoneCenterY_Landscape,
-								clLayoutPhoneHeight: clLayoutPhoneHeight_Landscape,
-								clLayoutPhoneLeft: clLayoutPhoneLeft_Landscape,
-								clLayoutPhoneRight: clLayoutPhoneRight_Landscape,
-
-								clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Landscape,
-								clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Landscape,
-								clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Landscape,
-								clLayoutLoginBtnRight: clLayoutLoginBtnRight_Landscape,
-
-								clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Landscape,
-								clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Landscape,
-								clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Landscape,
-								clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Landscape,
-
-								clLayoutSloganLeft: clLayoutSloganLeft_Landscape,
-								clLayoutSloganRight: clLayoutSloganRight_Landscape,
-								clLayoutSloganHeight: clLayoutSloganHeight_Landscape,
-								clLayoutSloganBottom: clLayoutSloganBottom_Landscape,
-							},
-						},
+					shanYanSDKModule.quickAuthLoginWithConfigure(this.ios_uiConfigure,
 						openLoginAuthListenerResult => {
 							//拉起授权页面回调
 							uni.hideLoading();
@@ -540,6 +769,10 @@
 								title: JSON.stringify(openLoginAuthListenerResult),
 								duration: 3000
 							});
+							
+							this.shanyan_code = JSON.stringify(openLoginAuthListenerResult.code);
+							this.shanyan_result = JSON.stringify(openLoginAuthListenerResult);
+							console.log(JSON.stringify(openLoginAuthListenerResult));
 						},
 						oneKeyLoginListenerResult => {
 							uni.hideLoading();
@@ -577,6 +810,10 @@
 									duration: 3000
 								});
 							}
+							
+							this.shanyan_code = JSON.stringify(oneKeyLoginListenerResult.code);
+							this.shanyan_result = JSON.stringify(oneKeyLoginListenerResult);
+							console.log(JSON.stringify(oneKeyLoginListenerResult));
 						});
 				}
 			},
@@ -597,8 +834,8 @@
 			}
 		},
 		onReady() {
-			this.initPosition();
-			this.initProvider();
+			// this.initPosition();
+			// this.initProvider();
 		}
 	}
 </script>
