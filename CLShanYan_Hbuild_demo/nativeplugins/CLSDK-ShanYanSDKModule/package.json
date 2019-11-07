@@ -1,7 +1,7 @@
 {
 	"name": "CLSDK-ShanYanSDKModule",
 	"id": "CLSDK-ShanYanSDKModule",
-	"version": "2.2.1.1",
+	"version": "2.3.0.1",
 	"description": "闪验SDKHbuilder插件",
 	"_dp_type": "nativeplugin",
 	"_dp_nativeplugin": {
@@ -14,7 +14,7 @@
 			"integrateType": "framework",
 			"hooksClass": "CLShanYanSDKProxy",
 			"frameworks": [
-				"libc++.1.tbd"
+				"libc++.1"
 			],
 			"resources": [
 				"sdk_oauth.bundle"
