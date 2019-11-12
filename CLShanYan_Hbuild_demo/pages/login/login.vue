@@ -295,7 +295,7 @@
 									
 						clNavigationBackgroundClear: true, //导航栏透明
 						clNavigationBackBtnImage: "static/img/close-white.png", //返回按钮图片
-						clNavBackBtnAlimentRight: true, //返回按钮居右
+						clNavBackBtnAlimentRight: false, //返回按钮居右,设置自定义导航栏返回按钮时，以自定义为准
 									
 						clLogoImage: "static/img/logo_shanyan_text.png", //logo图片
 									
@@ -387,7 +387,133 @@
 							clLayoutSloganHeight: clLayoutSloganHeight_Landscape,
 							clLayoutSloganBottom: clLayoutSloganBottom_Landscape,
 						},
+						//自定义控件
+						widgets: {
+							widget0: {
+								widgetId: "customView_nav_left", //字符标记
+								type: "Button", // 类型：Button：按钮，ImageView:图片 TextView:文本
+								navPosition: "navleft", //按钮位置 navleft:导航栏左侧 ，navright:导航栏右侧（不设置默认添加到授权页上）,当设置为导航栏控件时，仅宽高可设置，位置固定
+								textContent: "自定义左侧返回按钮",//文字
+								textFont: 11,//字体
+								textColor: [1,1,0,1],//文字颜色[r,g,b,a]
+								// backgroundColor: [0,0,1,1],//控件背景色[r,g,b,a]
+								image: "static/img/close-black.png",
+								// userInteractionEnabled:true,//允许交互 默认true
+								// tag: 14241, //数字标记
+								// contentMode: //填充模式
+								
+								// cornerRadius: 10,//圆角，设置圆角时请设置masksToBounds:true
+								// masksToBounds:true,//圆角相关
+								
+								isFinish: true,//点击销毁授权页,
+								
+								// clLayoutLeft:12,
+								// clLayoutTop:60,
+								// clLayoutRight:-12,
+								// clLayoutBottom:-80,
+								clLayoutWidth:40,
+								clLayoutHeight:40,
+								// clLayoutCenterX:0,
+								// clLayoutCenterY:0,
+							},
+							widgetnavRight: {
+								widgetId: "customView_nav_right", //字符标记
+								type: "Button", // 类型：Button：按钮，ImageView:图片 TextView:文本
+								navPosition: "navright", //按钮位置 navleft:导航栏左侧 ，navright:导航栏右侧（不设置默认添加到授权页上）,当设置为导航栏控件时，仅宽高可设置，位置固定
+								textContent: "自定义控件1（点击销毁授权页）",//文字
+								textFont: 13,//字体
+								textColor: [0,1,0,1],//文字颜色[r,g,b,a]
+								backgroundColor: [0,0,1,1],//控件背景色[r,g,b,a]
+								image: "static/img/checkbox-multiple-ma.png",
+								// userInteractionEnabled:true,//允许交互 默认true
+								// tag: 14241, //数字标记
+								// contentMode: //填充模式
+								
+								cornerRadius: 10,//圆角，设置圆角时请设置masksToBounds:true
+								masksToBounds:true,//圆角相关
+								
+								isFinish: true,//点击销毁授权页,
+								
+								// clLayoutLeft:12,
+								// clLayoutTop:60,
+								// clLayoutRight:-12,
+								// clLayoutBottom:-80,
+								clLayoutWidth:60,
+								clLayoutHeight:40,
+								// clLayoutCenterX:0,
+								// clLayoutCenterY:0,
+							},
+							widget1: {
+								widgetId: "customView_one", //字符标记
+								type: "Button", // 类型：Button：按钮，ImageView:图片 TextView:文本
+								textContent: "自定义控件1（点击销毁授权页）",//文字
+								textFont: 13,//字体
+								textColor: [0,1,0,1],//文字颜色[r,g,b,a]
+								backgroundColor: [0,0,1,1],//控件背景色[r,g,b,a]
+								image: "static/img/logo_shanyan_text.png",
+
+								
+								cornerRadius: 10,//圆角，设置圆角时请设置masksToBounds:true
+								masksToBounds:true,//圆角相关
+								
+								isFinish: true,//点击销毁授权页,
+								
+								// clLayoutLeft:12,
+								// clLayoutTop:60,
+								// clLayoutRight:-12,
+								clLayoutBottom:-50,
+								clLayoutWidth:180,
+								clLayoutHeight:50,
+								clLayoutCenterX:0,
+								// clLayoutCenterY:0,
+							},
+							widget2: {
+								widgetId: "customView_two", //字符标记
+								type: "TextView", // 类型：Button：按钮，ImageView:图片 TextView:文本
+								textContent: "自定义控件文本自定义控件文本自定义控件文本自定义控件文本自定义控件文本自定义控件文本自定义控件文本",//文字
+								textFont: 10,//字体
+								textColor: [1,0.5,0.6,1],//文字颜色[r,g,b,a]
+								backgroundColor: [0,1,0,1],//控件背景色[r,g,b,a]
+								numberOfLines:0, //行数：默认单行， 0:无限，自动换行，其他：指定行数
+								textAlignment: 2, //0: center 1: left 2: right //仅TextView有效
+								
+								clLayoutLeft:80,
+								// clLayoutTop:60,
+								clLayoutRight:-80,
+								clLayoutBottom:-120,
+								// clLayoutWidth:150,
+								clLayoutHeight:60,
+								// clLayoutCenterX:0,
+								// // clLayoutCenterY:0,
+							},
+							widget3: {
+								widgetId: "customView_three_imageView", //字符标记
+								type: "ImageView", // 类型：Button：按钮，ImageView:图片 TextView:文本
+								image: "static/img/shanyanlogo1.png",
+								backgroundColor: [0,1,0,1],//控件背景色[r,g,b,a]
+								
+								cornerRadius: 40,//圆角，设置圆角时请设置masksToBounds:true
+								masksToBounds:true,//圆角相关
+								
+								clLayoutLeft:80,
+								clLayoutTop:160,
+								clLayoutRight:-80,
+								// clLayoutBottom:-280,
+								// clLayoutWidth:150,
+								clLayoutHeight:80,
+								// clLayoutCenterX:0,
+								// clLayoutCenterY:0,
+							}
+						},
 					}
+					
+					//设置自定义控件点击回调
+					shanYanSDKModule.setCustomInterface((customInterface) => {
+								
+						this.shanyan_result = JSON.stringify(customInterface);
+						console.log(JSON.stringify(customInterface));
+					});
+					
 					this.shanyan_code = 1000;
 					this.shanyan_result = "授权页配置完成";
 					
@@ -715,7 +841,22 @@
 				shanYanSDKModule.startAuthentication((result) => {
 					uni.hideLoading();
 					this.shanyan_code = JSON.stringify(result.code);
-					this.shanyan_result = JSON.stringify(result.result);
+					this.shanyan_result = JSON.stringify(result);
+					
+					let platform = uni.getSystemInfoSync().platform;
+					if (platform == 'android') {
+						
+						
+						
+					}else if (platform == 'ios') {
+						
+						if (result.error != null) {
+							//iOS error存在即为失败
+						}else{
+							//成功
+						}
+					}
+										
 					console.log(JSON.stringify(result));
 				});
 			},
