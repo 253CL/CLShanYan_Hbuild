@@ -202,9 +202,6 @@
 					//iOS 全屏模式
 				
 					let screenWidth_Portrait = plus.screen.resolutionWidth; //竖屏宽
-					let screenHeight_Portrait = plus.screen.resolutionHeight; //竖屏宽
-					let screenWidth_Landscape = plus.screen.resolutionHeight; //横屏宽(即竖屏高)
-					let screenHeight_Landscape = plus.screen.resolutionWidth; //横屏高(即竖屏宽)
 					
 					var screenScale = screenWidth_Portrait / 375.0; //相对iphone6屏幕
 					if (screenScale > 1) {
@@ -918,7 +915,7 @@
 						oneKeyLoginListenerResult => {
 							uni.hideLoading();
 							//点一键登录回调	
-							if (oneKeyLoginListenerResult.error != null) {
+							if (oneKeyLoginListenerResult.errorCode != null) {
 								if (oneKeyLoginListenerResult.code == 1011) {
 									//提示：错误无需提示给用户，可以在用户无感知的状态下直接切换登录方式
 									//用户取消登录（点返回）
@@ -926,13 +923,9 @@
 									//点击sdk自带的返回，无论是否设置手动销毁，授权页面都会强制关闭
 								} else {
 									//处理建议：其他错误代码表示闪验通道无法继续，可以统一走开发者自己的其他登录方式，也可以对不同的错误单独处理
-									//1003    一键登录获取token失败
-									//其他     其他错误//
-
 									//关闭授权页
 									shanYanSDKModule.finishAuthControllerCompletion(oneKeyLoginListenerResult => {
-										//如需跳转，code here:
-
+										
 									});
 								}
 							} else {
