@@ -73,9 +73,9 @@
 				let platform = uni.getSystemInfoSync().platform;
 				let appid;
 				if (platform == 'android') {
-					appid = 'loXN4jDs';
+					appid = '安卓appID';//appID与包名绑定
 				} else if (platform == 'ios') {
-					appid = 'eWWfA2KJ';
+					appid = 'iOSappID';//appID与bundleID绑定
 				}
 				//闪验SDK 初始化
 				shanYanSDKModule.init({
