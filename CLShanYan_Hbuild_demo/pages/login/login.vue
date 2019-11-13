@@ -92,6 +92,9 @@
 				uni.showLoading({
 					mask: true,
 				})
+				
+				//实际预取号建议提前调用，如将要调起授权页的前置页面的onLoad中、个人中心页面的onLoad等可预期会触发一键登录的时机
+				
 				let platform = uni.getSystemInfoSync().platform;
 				if (platform == 'android') {
 					//闪验SDK 预取号
@@ -395,9 +398,7 @@
 								textColor: [1,1,0,1],//文字颜色[r,g,b,a]
 								// backgroundColor: [0,0,1,1],//控件背景色[r,g,b,a]
 								image: "static/img/close-black.png",
-								// userInteractionEnabled:true,//允许交互 默认true
-								// tag: 14241, //数字标记
-								// contentMode: //填充模式
+				
 								
 								// cornerRadius: 10,//圆角，设置圆角时请设置masksToBounds:true
 								// masksToBounds:true,//圆角相关
@@ -422,9 +423,6 @@
 								textColor: [0,1,0,1],//文字颜色[r,g,b,a]
 								backgroundColor: [0,0,1,1],//控件背景色[r,g,b,a]
 								image: "static/img/checkbox-multiple-ma.png",
-								// userInteractionEnabled:true,//允许交互 默认true
-								// tag: 14241, //数字标记
-								// contentMode: //填充模式
 								
 								cornerRadius: 10,//圆角，设置圆角时请设置masksToBounds:true
 								masksToBounds:true,//圆角相关
@@ -847,8 +845,8 @@
 						
 					}else if (platform == 'ios') {
 						
-						if (result.error != null) {
-							//iOS error存在即为失败
+						if (result.errorCode != null) {
+							//iOS errorCode存在即为失败
 						}else{
 							//成功
 						}
