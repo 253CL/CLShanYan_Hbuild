@@ -441,17 +441,17 @@
 							widget1: {
 								widgetId: "customView_one", //字符标记
 								type: "Button", // 类型：Button：按钮，ImageView:图片 TextView:文本
-								textContent: "自定义控件1（点击销毁授权页）",//文字
+								textContent: "自定义控件34（点击销毁授权页）",//文字
 								textFont: 13,//字体
 								textColor: [0,1,0,1],//文字颜色[r,g,b,a]
 								backgroundColor: [0,0,1,1],//控件背景色[r,g,b,a]
-								image: "static/img/logo_shanyan_text.png",
+								// image: "static/img/logo_shanyan_text.png",
 
 								
 								cornerRadius: 10,//圆角，设置圆角时请设置masksToBounds:true
 								masksToBounds:true,//圆角相关
 								
-								isFinish: true,//点击销毁授权页,
+								// isFinish: true,//点击销毁授权页,
 								
 								// clLayoutLeft:12,
 								// clLayoutTop:60,
