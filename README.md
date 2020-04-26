@@ -17,7 +17,7 @@
  6. HBuilderX->『运行』->『运行到手机或模拟器』->『运行设备XXX』
  
 ## WebSite
-http://flash.253.com
+http://shanyan.253.com
 
 ## Author
 
