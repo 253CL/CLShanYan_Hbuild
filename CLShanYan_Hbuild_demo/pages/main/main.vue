@@ -44,11 +44,11 @@
 							 */
                             if (this.forcedLogin) {
                                 uni.reLaunch({
-                                    url: '../login/login'
+                                    url: '../login/alogin'
                                 });
                             } else {
                                 uni.navigateTo({
-                                    url: '../login/login'
+                                    url: '../login/alogin'
                                 });
                             }
                         }

@@ -6,7 +6,7 @@
                 "navigationBarTitleText": "登录模板"
             }
         }, {
-            "path": "pages/login/login",
+            "path": "pages/login/alogin",
             "style": {
                 "navigationBarTitleText": "登录"
             }
