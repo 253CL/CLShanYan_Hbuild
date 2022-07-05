@@ -11,8 +11,8 @@
 				appid = 'loXN4jDs';
 				appkey = 'anOiEQaQ';
 			}else if(platform == 'ios'){
-				appid = 'eWWfA2KJ';
-				appkey = 'tDo3Ml2K';
+				appid = '7I5nJT7h';
+				appkey = 'VIh7r2rj';
 			}
 			//初始化
 			shanYanSDKModule.init({

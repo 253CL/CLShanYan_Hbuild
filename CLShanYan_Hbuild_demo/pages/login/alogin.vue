@@ -75,9 +75,8 @@
 				if (platform == 'android') {
 					appid = 'loXN4jDs';//appID与包名绑定
 				} else if (platform == 'ios') {
-					appid = 'iOSappID';//appID与bundleID绑定
+					appid = '7I5nJT7h';//appID与bundleID绑定
 				}
-				shanYanSDKModule.setDebug(true),
 				//闪验SDK 初始化
 				shanYanSDKModule.init({
 					appid: appid,
