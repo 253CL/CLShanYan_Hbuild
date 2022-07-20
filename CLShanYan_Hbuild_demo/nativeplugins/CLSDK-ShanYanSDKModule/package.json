@@ -14,8 +14,8 @@
 			"integrateType": "framework",
 			"hooksClass": "CLShanYanSDKProxy",
 			"frameworks": [
-				"libc++.1",
-				"Network"
+				"libc++.1.tbd",
+				"Network.framework"
 			],
 			"resources": [
 				"sdk_oauth.bundle"
