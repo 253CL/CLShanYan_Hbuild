@@ -1,7 +1,7 @@
 {
 	"name": "CLSDK-ShanYanSDKModule",
 	"id": "CLSDK-ShanYanSDKModule",
-	"version": "2.3.4.3",
+	"version": "2.3.4.8",
 	"description": "闪验SDKHbuilder插件",
 	"_dp_type": "nativeplugin",
 	"_dp_nativeplugin": {
@@ -14,7 +14,8 @@
 			"integrateType": "framework",
 			"hooksClass": "CLShanYanSDKProxy",
 			"frameworks": [
-				"libc++.1"
+                "libc++.1.tbd",
+                "Network.framework"
 			],
 			"resources": [
 				"sdk_oauth.bundle"
@@ -29,12 +30,11 @@
 			}],
 			"hooksClass": "",
 			"integrateType": "aar",
-			"minSdkVersion": "16",
+			"minSdkVersion": "19",
 			"permissions": [
 				"android.permission.INTERNET",
 				"android.permission.ACCESS_WIFI_STATE",
 				"android.permission.CHANGE_NETWORK_STATE",
-				"android.permission.CHANGE_WIFI_STATE",
 				"android.permission.ACCESS_NETWORK_STATE"
 			]
 		}
