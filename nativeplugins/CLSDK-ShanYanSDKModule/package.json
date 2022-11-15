@@ -1,7 +1,7 @@
 {
 	"name": "CLSDK-ShanYanSDKModule",
 	"id": "CLSDK-ShanYanSDKModule",
-	"version": "2.3.4.8",
+	"version": "2.3.4.9",
 	"description": "闪验SDKHbuilder插件",
 	"_dp_type": "nativeplugin",
 	"_dp_nativeplugin": {
