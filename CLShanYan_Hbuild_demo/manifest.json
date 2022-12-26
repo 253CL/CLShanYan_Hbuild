@@ -9,7 +9,9 @@
     "app-plus" : {
         "usingComponents" : true,
         /* 模块配置 */
-        "modules" : {},
+        "modules" : {
+            "Payment" : {}
+        },
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
@@ -44,7 +46,8 @@
             "ios" : {},
             /* SDK配置 */
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "payment" : {}
             }
         },
         "nativePlugins" : {
